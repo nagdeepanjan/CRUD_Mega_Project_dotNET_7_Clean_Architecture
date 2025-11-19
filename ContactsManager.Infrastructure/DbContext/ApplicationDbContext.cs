@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ContactsManager.Core.Domain.IdentityEntities;
 using Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entities
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext: IdentityDbContext<ApplicationUser, ApplicationRole, Guid>                                     //DbContext
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
         }
-
 
         public virtual DbSet<Country> Countries { get; set; }           //Virtual is needed for Mocking
         public virtual DbSet<Person> Persons { get; set; }
