@@ -90,5 +90,18 @@ namespace ContactsManager.UI.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Persons");
         }
+
+        public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
+        {
+            ApplicationUser user = await _userManager.FindByEmailAsync(email);              //Meant for new email validation when registering, so that it doesn't already exist
+            if (user == null)
+            {
+                return Json(true); //valid
+            }
+            else
+            {
+                return Json(false); //invalid
+            }
+        }
     }
 }
