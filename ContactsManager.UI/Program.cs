@@ -61,12 +61,11 @@ if (builder.Environment.IsDevelopment())
     //app.UseExceptionHandlingMiddleware();
 }
 
-
 app.Logger.LogError("Deepz log!");
 
 app.UseStaticFiles();
 
-app.UseRouting();
+app.UseRouting();                       //May not be needed
 
 app.UseAuthentication();                //Reading identity cookie from browser
 app.UseAuthorization();
