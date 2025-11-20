@@ -1,6 +1,7 @@
 using ContactsManager.Core.Domain.IdentityEntities;
 using CRUD_Last.Middleware;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,18 @@ builder.Services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
 builder.Services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
 builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+});
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+});
+
+//DB 
+builder.Services.AddDbContext<ApplicationDbContext>((options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))));
+
 //Identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>((options) =>
     {
@@ -37,8 +50,6 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>((options) =>
     .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
     .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
 
-//DB 
-builder.Services.AddDbContext<ApplicationDbContext>((options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
 var app = builder.Build();
 
@@ -55,7 +66,11 @@ app.Logger.LogError("Deepz log!");
 
 app.UseStaticFiles();
 
+app.UseRouting();
+
 app.UseAuthentication();                //Reading identity cookie from browser
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
