@@ -26,7 +26,12 @@ builder.Services.AddScoped<IPersonsSorterService, PersonsSorterService>();
 builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+
+    options.AddPolicy("NotAuthorized",
+        policy => { policy.RequireAssertion((context => !context.User.Identity.IsAuthenticated));});       //Applied when Authorize attribute is used with this policy name
 });
+
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -60,6 +65,9 @@ if (builder.Environment.IsDevelopment())
     //app.UseExceptionHandler("/Error");              //Built-in middleware to show error-page
     //app.UseExceptionHandlingMiddleware();
 }
+
+app.UseHsts();                                          //use for https
+app.UseHttpsRedirection();                              //use for https
 
 app.Logger.LogError("Deepz log!");
 
